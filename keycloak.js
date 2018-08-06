@@ -122,8 +122,7 @@ module.exports = function (RED) {
             text: err
           });
           msg.error = err
-          msg.statusCode = 403
-          break;
+          msg.statusCode = 403          
         }
       
         if (this.client && this.role && !jwt.body.resource_access[this.client].roles.has(this.roles)) {
@@ -133,9 +132,9 @@ module.exports = function (RED) {
             shape: 'ring',
             text: err
           });
-          msg.error = err
-          msg.statusCode = 403
-          break;
+          msg.error = err;
+          msg.statusCode = 403;
+         
         };
       
         if (!this.client && this.role) {
