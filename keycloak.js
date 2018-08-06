@@ -114,7 +114,49 @@ module.exports = function (RED) {
 
         msg.access_token = jwt;
         //check role and client
-        checkPermission(this, msg, jwt);
+        if (this.client && !jwt.body.resource_access[this.client]) {
+          let err = 'Access error : client not found';
+          this.status({
+            fill: 'red',
+            shape: 'ring',
+            text: err
+          });
+          msg.error = err
+          msg.statusCode = 403
+          break;
+        }
+      
+        if (this.client && this.role && !jwt.body.resource_access[this.client].roles.has(this.roles)) {
+          let err = 'Access error : role not found with client : ' + this.client;
+          this.status({
+            fill: 'red',
+            shape: 'ring',
+            text: err
+          });
+          msg.error = err
+          msg.statusCode = 403
+          break;
+        };
+      
+        if (!this.client && this.role) {
+          for (var client in jwt.body.ressource_access) {
+            if (client.roles.has(this.role)) {        
+              break;
+            } else {
+              msg.statusCode = 403;
+            }
+          }
+      
+          if (msg.statusCode == 403) {
+            let err = 'Access error : role not found ';
+            this.status({
+              fill: 'red',
+              shape: 'ring',
+              text: err
+            });
+            msg.error = err
+          }
+        };
         if (delete msg.error) {
           msg.payload = {};
         }
@@ -127,49 +169,3 @@ module.exports = function (RED) {
   RED.nodes.registerType('Keycloak', KeycloakNode)
 }
 
-var checkPermission = function (this, msg, jwt) {
-
-  if (this.client && !jwt.body.resource_access[this.client]) {
-    let err = 'Access error : client not found';
-    this.status({
-      fill: 'red',
-      shape: 'ring',
-      text: err
-    });
-    msg.error = err
-    msg.statusCode = 403
-    break;
-  }
-
-  if (this.client && this.role && !jwt.body.resource_access[this.client].roles.has(this.roles)) {
-    let err = 'Access error : role not found with client : ' + this.client;
-    this.status({
-      fill: 'red',
-      shape: 'ring',
-      text: err
-    });
-    msg.error = err
-    msg.statusCode = 403
-    break;
-  };
-
-  if (!this.client && this.role) {
-    for (var client in jwt.body.ressource_access) {
-      if (client.roles.has(this.role)) {        
-        break;
-      } else {
-        msg.statusCode = 403;
-      }
-    }
-
-    if (msg.statusCode == 403) {
-      let err = 'Access error : role not found ';
-      this.status({
-        fill: 'red',
-        shape: 'ring',
-        text: err
-      });
-      msg.error = err
-    }
-  };
-}
