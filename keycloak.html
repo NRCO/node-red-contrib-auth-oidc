@@ -14,7 +14,7 @@
   limitations under the License.
 -->
 
-<script type="text/x-red" data-template-name="auth-oidc">
+<script type="text/x-red" data-template-name="Keycloak">
   <div class="form-row">
     <label for="node-input-discovery">
       <i class="fa fa-globe"></i>
@@ -47,7 +47,7 @@
   </div>
 </script>
 
-<script type="text/x-red" data-help-name="auth-oidc">
+<script type="text/x-red" data-help-name="Keycloak">
 <p>
 This node expects to find the access token into the following message property:
 <code>msg.req.headers['Authorization']</code>.
@@ -66,7 +66,7 @@ Plus, role and client can be indicated to filter request.
 </script>
 
 <script type="text/javascript">
-RED.nodes.registerType('auth-oidc',{
+RED.nodes.registerType('Keycloak',{
   category: 'function',
   color: '#e7e7ae',
   defaults: {
@@ -80,7 +80,7 @@ RED.nodes.registerType('auth-oidc',{
   outputs: 1,
   icon: 'openid.png',
   label: function() {
-    return this.name || 'Auth OIDC';
+    return this.name || 'Auth Keycloak';
   },
   labelStyle: function() {
     return this.name ? 'node_label_italic' : '';

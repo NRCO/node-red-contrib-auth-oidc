@@ -21,7 +21,7 @@ module.exports = function (RED) {
   const nJwt = require('njwt')
   const request = require('request')
 
-  function AuthOIDCNode(n) {
+  function KeycloakNode(n) {
     RED.nodes.createNode(this, n)
 
     // Set node state
@@ -124,7 +124,7 @@ module.exports = function (RED) {
       })
     })
   }
-  RED.nodes.registerType('auth-oidc', AuthOIDCNode)
+  RED.nodes.registerType('Keycloak', KeycloakNode)
 }
 
 var checkPermission = function (this, msg, jwt) {
