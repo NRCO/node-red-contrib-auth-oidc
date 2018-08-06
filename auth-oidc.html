@@ -29,6 +29,22 @@
     </label>
     <input type="text" id="node-input-name" data-i18n="[placeholder]auth-oidc.label.name">
   </div>
+
+  <div class="form-row">
+    <label for="node-input-client">
+      <i class="fa fa-tag"></i>
+      <span data-i18n="auth-oidc.label.client"></span>
+    </label>
+    <input type="text" id="node-input-client" data-i18n="[placeholder]auth-oidc.label.client">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-role">
+      <i class="fa fa-tag"></i>
+      <span data-i18n="auth-oidc.label.role"></span>
+    </label>
+    <input type="text" id="node-input-role" data-i18n="[placeholder]auth-oidc.label.role">
+  </div>
 </script>
 
 <script type="text/x-red" data-help-name="auth-oidc">
@@ -42,7 +58,10 @@ Connect discovery URL.
 </p>
 <p>
 If the access token is valid, its decoded content is stored into the following
-message property: <code>msg.token</code>
+message property: <code>msg.access_token
+<p>
+Plus, role and client can be indicated to filter request.
+</code>
 </p>
 </script>
 
@@ -52,7 +71,10 @@ RED.nodes.registerType('auth-oidc',{
   color: '#e7e7ae',
   defaults: {
     name: {value: ''},
-    discovery: {value: '', required: true}
+    discovery: {value: '', required: true},
+    client : {value : ''},
+    role : {value : ''}
+
   },
   inputs: 1,
   outputs: 1,
