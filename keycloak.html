@@ -18,32 +18,30 @@
   <div class="form-row">
     <label for="node-input-discovery">
       <i class="fa fa-globe"></i>
-      <span data-i18n="auth-oidc.label.discovery"></span>
+      <span>Discorery</span>
     </label>
-    <input type="url" id="node-input-discovery" data-i18n="[placeholder]auth-oidc.label.discovery">
+    <input type="url" id="node-input-discovery" placeholder="discovery">
+  </div>
+  <div class="form-row">
+    <label for="node-input-client">
+      <i class="fa fa-tag"></i>
+      <span>Client</span>
+    </label>
+    <input type="text" id="node-input-client" placeholder="client">
+  </div>
+  <div class="form-row">
+    <label for="node-input-role">
+      <i class="fa fa-tag"></i>
+      <span>Role</span>
+    </label>
+    <input type="text" id="node-input-role" placeholder="role">
   </div>
   <div class="form-row">
     <label for="node-input-name">
       <i class="fa fa-tag"></i>
-      <span data-i18n="auth-oidc.label.name"></span>
+      <span>Name</span>
     </label>
-    <input type="text" id="node-input-name" data-i18n="[placeholder]auth-oidc.label.name">
-  </div>
-
-  <div class="form-row">
-    <label for="node-input-client">
-      <i class="fa fa-tag"></i>
-      <span data-i18n="auth-oidc.label.client"></span>
-    </label>
-    <input type="text" id="node-input-client" data-i18n="[placeholder]auth-oidc.label.client">
-  </div>
-
-  <div class="form-row">
-    <label for="node-input-role">
-      <i class="fa fa-tag"></i>
-      <span data-i18n="auth-oidc.label.role"></span>
-    </label>
-    <input type="text" id="node-input-role" data-i18n="[placeholder]auth-oidc.label.role">
+    <input type="text" id="node-input-name">
   </div>
 </script>
 
@@ -58,10 +56,10 @@ Connect discovery URL.
 </p>
 <p>
 If the access token is valid, its decoded content is stored into the following
-message property: <code>msg.access_token
+message property: <code>msg.access_token</code>
 <p>
-Plus, role and client can be indicated to filter request.
-</code>
+Role and client can be indicated to filter request.
+
 </p>
 </script>
 
