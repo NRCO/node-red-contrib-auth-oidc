@@ -1,0 +1,151 @@
+
+<script type="text/x-red" data-template-name="Keycloak">
+  <div class="form-row">
+    <label for="node-input-operation">
+      <i class="fa fa-wrench"></i>
+      <span>Operation</span>
+    </label>
+    <select type="text" id="node-input-operation" style="display: inline-block; vertical-align: top;">
+      <option value="create">Create User</option>
+      <option value="changePwd">Change Password</option>
+      <option value="getAuth">Get Auth</option>
+      <option value="checkAuth">Check Auth</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-discovery">
+      <i class="fa fa-globe"></i>
+      <span>Discorery</span>
+    </label>
+    <input type="url" id="node-input-discovery" placeholder="discovery">
+  </div>
+  <div class="form-row">
+    <label for="node-input-client">
+      <i class="fa fa-tag"></i>
+      <span>Client</span>
+    </label>
+    <input type="text" id="node-input-client" placeholder="client">
+  </div>
+  <div class="form-row">
+    <label for="node-input-role">
+      <i class="fa fa-tag"></i>
+      <span>Role</span>
+    </label>
+    <input type="text" id="node-input-role" placeholder="role">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name">
+      <i class="fa fa-tag"></i>
+      <span>Name</span>
+    </label>
+    <input type="text" id="node-input-name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-realm">
+      <i class="fa fa-globe"></i>
+      <span>Realm</span>
+    </label>
+    <input type="text" id="node-input-realm" placeholder="realm">
+  </div>
+  <div class="form-row">
+    <label for="node-input-url">
+      <i class="fa fa-tag"></i>
+      <span>Url Auth</span>
+    </label>
+    <input type="url" id="node-input-url" placeholder="url">
+  </div>
+  <div class="form-row">
+    <label for="node-input-client">
+      <i class="fa fa-tag"></i>
+      <span>Client</span>
+    </label>
+    <input type="text" id="node-input-client" placeholder="client">
+  </div>
+  <div class="form-row">
+    <label for="node-input-secret">
+      <i class="fa fa-tag"></i>
+      <span>Secret</span>
+    </label>
+    <input type="password" id="node-input-secret">
+  </div>
+  <div class="form-row">
+    <label for="node-input-admin">
+      <i class="fa fa-tag"></i>
+      <span>User Admin</span>
+    </label>
+    <input type="text" id="node-input-admin">
+  </div>
+  <div class="form-row">
+    <label for="node-input-admin_password">
+      <i class="fa fa-tag"></i>
+      <span>Pwd Admin</span>
+    </label>
+    <input type="password" id="node-input-admin_password">
+  </div>
+  <div class="form-row">
+    <label for="node-input-groupName">
+      <i class="fa fa-tag"></i>
+      <span>Groupe</span>
+    </label>
+    <input type="password" id="node-input-groupName">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="Keycloak">
+  <p>
+    This node expects to find the access token into the following message property:
+    <code>msg.req.headers['Authorization']</code>.
+  </p>
+  <p>
+    The access token is validated with public keys extracted form the OpenID Connect discovery URL.
+  </p>
+  <p>
+    If the access token is valid, its decoded content is stored into the following message property:
+    <code>msg.access_token</code>
+    <p>
+      Role and client can be indicated to filter request.
+
+    </p>
+</script>
+
+<script type="text/javascript">
+  function oneditprepare() {
+    $("#node-input-operation").change(function () {
+      var id = $("#node-input-operation option:selected").val();
+      if (id === "create") {
+        $(".node-input-payonly").hide();
+        $(".node-input-upsert, .node-input-multi").show();
+      }
+    });  
+  }
+
+  RED.nodes.registerType('Keycloak', {
+    category: 'Keycloak',
+    color: '#e7e7ae',
+    defaults: {
+      name: {
+        value: ''
+      },
+      discovery: {
+        value: '',
+        required: true
+      },
+      client: {
+        value: ''
+      },
+      role: {
+        value: ''
+      }
+
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'keycloak.png',
+    label: function () {
+      return this.name || 'Auth Keycloak';
+    },
+    labelStyle: function () {
+      return this.name ? 'node_label_italic' : '';
+    }
+  });
+</script>

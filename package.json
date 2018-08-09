@@ -19,7 +19,7 @@
   ],
   "node-red": {
     "nodes": {
-      "keycloak": "keycloak.js"
+      "keycloak": "./nodes/keycloak.js"
     }
   }
 }
