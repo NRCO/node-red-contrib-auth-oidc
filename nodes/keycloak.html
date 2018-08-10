@@ -1,0 +1,201 @@
+
+<script type="text/x-red" data-template-name="Keycloak">
+  <div class="form-row">
+    <label for="node-input-operation">
+      <i class="fa fa-wrench"></i>
+      <span>Operation</span>
+    </label>
+    <select type="text" id="node-input-operation" style="display: inline-block; vertical-align: top;">
+      <option value="create">Create User</option>
+      <option value="changePwd">Change Password</option>
+      <option value="getAuth">Get Auth</option>
+      <option value="checkAuth">Check Auth</option>
+    </select>
+  </div>
+  <div class="form-row node-input-discovery">
+    <label for="node-input-discovery">
+      <i class="fa fa-globe"></i>
+      <span>Discorery</span>
+    </label>
+    <input type="url" id="node-input-discovery" placeholder="discovery">
+  </div>
+  <div class="form-row node-input-client">
+    <label for="node-input-client">
+      <i class="fa fa-tag"></i>
+      <span>Client</span>
+    </label>
+    <input type="text" id="node-input-client" placeholder="client">
+  </div>
+  <div class="form-row node-input-secret">
+    <label for="node-input-secret">
+      <i class="fa fa-tag"></i>
+      <span>Secret</span>
+    </label>
+    <input type="password" id="node-input-secret">
+  </div>
+  <div class="form-row node-input-role">
+    <label for="node-input-role">
+      <i class="fa fa-tag"></i>
+      <span>Role</span>
+    </label>
+    <input type="text" id="node-input-role" placeholder="role">
+  </div>  
+  <div class="form-row node-input-realm">
+    <label for="node-input-realm">
+      <i class="fa fa-globe"></i>
+      <span>Realm</span>
+    </label>
+    <input type="text" id="node-input-realm" placeholder="realm">
+  </div>
+  <div class="form-row node-input-url">
+    <label for="node-input-url">
+      <i class="fa fa-tag"></i>
+      <span>Url Auth</span>
+    </label>
+    <input type="url" id="node-input-url" placeholder="url">
+  </div>  
+  <div class="form-row node-input-admin">
+    <label for="node-input-admin">
+      <i class="fa fa-tag"></i>
+      <span>User Admin</span>
+    </label>
+    <input type="text" id="node-input-admin">
+  </div>
+  <div class="form-row node-input-admin_password">
+    <label for="node-input-admin_password">
+      <i class="fa fa-tag"></i>
+      <span>Pwd Admin</span>
+    </label>
+    <input type="password" id="node-input-admin_password">
+  </div>  
+</script>
+
+<script type="text/x-red" data-help-name="Keycloak">
+
+  <p>
+    This node is used to get some basic api keycloak functions
+  <p>
+    <li><b>Parameters are :</b>
+      <ul>
+        <li>Discovery : ex : https://auth.fr/auth/realms/myrealm/.well-known/openid-configuration </li>
+        <li>Client : Name of client </li>
+        <li>Secret : Credential secret of your client </li>
+        <li>Realm : Name of your realm </li>
+        <li>Auth : https://auth.fr/auth </li>
+        <li>Url Auth : https://auth.fr/auth </li>
+        <li>Admin : admin name </li>
+        <li>Admin password</li>
+      </ul>
+    </li>
+  </p>
+  <p>
+    <li><b>Operations are : </b>
+      <ul>
+        <li>Get Auth : Used to get a refresh token which is stored into <code>msg.access_token</code> and headers in order to be able to call http with authorization  </li>
+        <li>Create : Used to create a new user and associate him to a group. Ex payload : <code>{"username":"test17","email":"test17@fr","enabled":true,"groupName":"editeur"}</code>  </li>
+        <li>Change Password: Used to change the actual password for a username. Ex playload <code>{"username":"test17","password":"ok"}</code></li>
+        <li>Check auth : Used to check if the caller is able to start the flow. Node must be placed just after http in. You can filter with role and client input parameters</li>
+      </ul>
+    </li>
+  </p>  
+</script>
+
+<script type="text/javascript">
+  function oneditprepare() {
+    $("#node-input-operation").change(function () {
+      console.log('change');
+      var id = $("#node-input-operation option:selected").val();
+      console.log('value : ' + id);
+      if (id === "checkAuth") {
+        $(".node-input-realm").hide();
+        $(".node-input-url").hide();
+        $(".node-input-secret").hide();
+        $(".node-input-admin").hide();
+        $(".node-input-admin_password").hide();
+        $(".node-input-upsert, .node-input-discovery").show();
+        $(".node-input-upsert, .node-input-client").show();
+        $(".node-input-upsert, .node-input-role").show();
+      }
+      if (id === "create") {      
+        $(".node-input-realm").show();
+        $(".node-input-url").show();
+        $(".node-input-secret").show();
+        $(".node-input-admin").show();
+        $(".node-input-admin_password").show();
+        $(".node-input-upsert, .node-input-discovery").show();
+        $(".node-input-upsert, .node-input-client").show();
+        $(".node-input-upsert, .node-input-role").hide();
+      }
+      if (id === "getAuth") {      
+        $(".node-input-realm").show();
+        $(".node-input-url").show();
+        $(".node-input-secret").show();
+        $(".node-input-admin").show();
+        $(".node-input-admin_password").show();
+        $(".node-input-upsert, .node-input-discovery").show();
+        $(".node-input-upsert, .node-input-client").show();
+        $(".node-input-upsert, .node-input-role").hide();
+      }
+      if (id === "changePwd") {      
+        $(".node-input-realm").show();
+        $(".node-input-url").show();
+        $(".node-input-secret").show();
+        $(".node-input-admin").show();
+        $(".node-input-admin_password").show();
+        $(".node-input-upsert, .node-input-discovery").show();
+        $(".node-input-upsert, .node-input-client").show();
+        $(".node-input-upsert, .node-input-role").hide();
+        $(".node-input-upsert, .node-input-groupe").hide();
+      }
+    });  
+  }
+
+  RED.nodes.registerType('Keycloak', {
+    category: 'Keycloak',
+    color: '#999999',
+    defaults: {
+      operation: {
+        value : ''
+      },
+      discovery: {
+        value: '',
+        required: true
+      },
+      client: {
+        value: ''
+      },
+      role: {
+        value: ''
+      },
+      realm: {
+        value: ''
+      },
+      url : {
+        value : ''
+      },
+      client: {
+        value: ''
+      },
+      secret :{
+        value: ''
+      },
+      admin :{
+        value : ''
+      },
+      admin_password :{
+        value :''
+      }  
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'keycloak.png',
+    align: 'right',
+    label: function () {
+      return this.name || 'Keycloak';
+    },
+    labelStyle: function () {
+      return this.name ? 'node_label_italic' : '';
+    },
+    oneditprepare: oneditprepare
+  });
+</script>
