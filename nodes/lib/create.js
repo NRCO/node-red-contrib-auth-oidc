@@ -1,13 +1,21 @@
+const adminClient = require("keycloak-admin-client");
+let settings = {};
 /**
  * Get client keycloak
  * @param {*} settings 
  */
-this.getClient = (settings) => {
+var getClient = (settings) => {
     return new Promise((resolve, reject) => {
+        console.log(settings);
         adminClient(settings)
             .then((client) => {
+                console.log(client);
                 return resolve(client);
             })
+            .catch((err) => {
+                err = "erreur admin client";
+                return reject(err);
+            });
     });
 }
 
@@ -16,12 +24,12 @@ this.getClient = (settings) => {
  * @param {*} client 
  * @param {*} groupName 
  */
-this.getGroupID = (client, groupName) => {
+var getGroupID = (client, groupName, realm) => {
     return new Promise((resolve, reject) => {
-        adminClient(settings)
+        return adminClient(settings)
             .then((client) => {
                 //console.log(client);
-                client.groups.find(realm)
+                return client.groups.find(realm)
                     .then((groups) => {
                         for (var i = 0; i < groups.length; i++) {
                             if (groups[i].name == groupName) {
@@ -30,9 +38,11 @@ this.getGroupID = (client, groupName) => {
                         }
                         return reject('Group doesnt exist');
                     }).catch((err) => {
-                        reject(err);
+                        return reject(err);
                     });
-            })
+            }).catch((err) => {
+                return reject(err);
+            });
     });
 }
 
@@ -41,14 +51,17 @@ this.getGroupID = (client, groupName) => {
  * @param {*} client 
  * @param {*} user 
  */
-this.createUser = (client, user) => {
+var createUser = (client, user, realm) => {
     return new Promise((resolve, reject) => {
-        client.users.create(realm, user)
+
+        console.log('user creation');
+        console.log(user);
+        return client.users.create(realm, user)
             .then((user) => {
                 console.log('user created');
-                resolve(user);
+                return resolve(user);
             }).catch((err) => {
-                reject(err);
+                return reject(err);
             });
     });
 }
@@ -56,21 +69,33 @@ this.createUser = (client, user) => {
 
 
 
-var create = (params) => {
-    return getClient(settings).then((client) => {
-        return getGroupID(client, this.groupName).then((groupId) => {
-            return createUser(client, userToCreated).then((user) => {
-                client.groups.join(this.realm, user.id, groupId)
-                .then(() =>{
-                    resolve(user);
-                })                
-                .catch((err) => {
-                   reject(err);
+var create = (node, userToCreated) => {
+    return new Promise((resolve, reject) => {
+        settings = {
+            baseUrl: node.url,
+            grant_type: 'password',
+            realmName: node.realm,
+            client_id: node.client,
+            client_secret: node.secret,
+            username: node.admin,
+            password: node.admin_password
+        };
+
+        return getClient(settings).then((client) => {
+            return getGroupID(client, userToCreated.groupName, settings.realmName).then((groupId) => {
+                delete userToCreated.groupName;
+                return createUser(client, userToCreated, settings.realmName).then((user) => {
+                    return client.groups.join(node.realm, user.id, groupId)
+                        .then(() => {
+                            return resolve("user created");
+                        })
+
                 });
             });
+        }).catch((err) => {
+            console.log(err);
+            return reject(err);
         });
-    }).catch((err) => {
-        console.log(err);
     });
 }
 

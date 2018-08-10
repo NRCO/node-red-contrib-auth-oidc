@@ -5,15 +5,15 @@ module.exports = function (RED) {
   const nJwt = require('njwt');
   const request = require('request');
   const check = require('./lib/check').check;
+  const create = require('./lib/create').create;
+  const changePwd = require('./lib/changePwd').changePwd;
+  const getAuth = require('./lib/getAuth').getAuth;
 
   function KeycloakNode(n) {
     RED.nodes.createNode(this, n)
 
-    // Set node state
-    this.name = n.name
-    this.discovery = n.discovery;
-    this.role = n.role;
-    this.client = n.client;
+
+    var node = this;
     this.verifier = {
       verify: function (accessToken, cb) {
         return cb(RED._('bad-discovery-endpoint'))
@@ -21,11 +21,10 @@ module.exports = function (RED) {
     }
 
     request.get({
-      url: this.discovery,
+      url: n.discovery,
       json: true
     }, (err, res, body) => {
-      if (err) {
-        console.log('Discovery error: %j', err)
+      if (err) {        
         this.status({
           fill: 'red',
           shape: 'ring',
@@ -34,7 +33,7 @@ module.exports = function (RED) {
         return this.error(RED._('bad-discovery-request'))
       }
       if (!body || !body.jwks_uri) {
-        console.log('Discovery error: bad response: %j', body)
+        
         this.status({
           fill: 'red',
           shape: 'ring',
@@ -42,7 +41,7 @@ module.exports = function (RED) {
         })
         return this.error(RED._('bad-discovery-response'))
       }
-      console.log('JWKS URI: %j', body.jwks_uri)
+      
 
       const options = {
         cache: true,
@@ -71,28 +70,62 @@ module.exports = function (RED) {
     })
 
     this.on('input', msg => {
-      if (!msg.req || !msg.req.headers || !msg.req.headers['authorization']) {
-        this.error(RED._('no-access-token'))
-        this.status({
-          fill: 'red',
-          shape: 'ring',
-          text: 'no-access-token'
-        });
-        msg.payload = {};
-        msg.error = 'NoAccessToken'
-        msg.statusCode = 401
-        return this.send(msg)
-      }
-      const accessToken = msg.req.headers['authorization'].split(' ')[1]
-      this.accessToken = accessToken;
-      check(this).then((res) => {
-        node.send(
-          msg = {
-            payload: res
+
+      switch (n.operation) {
+        case 'checkAuth':
+          if (!msg.req || !msg.req.headers || !msg.req.headers['authorization']) {
+            this.error(RED._('no-access-token'))
+            this.status({
+              fill: 'red',
+              shape: 'ring',
+              text: 'no-access-token'
+            });
+            msg.payload = {};
+            msg.error = 'NoAccessToken'
+            msg.statusCode = 401
+            return this.send(msg)
           }
-        );
-      });
+          const accessToken = msg.req.headers['authorization'].split(' ')[1]
+          this.accessToken = accessToken;
+          check(this, msg).then((res) => {
+            node.send(res)
+          });
+          break;
+
+        case 'create':
+          create(n, msg.payload).then((res) => {
+              msg.payload = res;
+              node.send(msg);
+            })
+            .catch((err)  => {
+              node.error(err);
+            });
+          break;
+        case 'changePwd':
+          changePwd(n, msg.payload).then((res) => {
+              msg.payload = res;
+              node.send(msg);
+            })
+            .catch((err)  => {
+              node.error(err);
+            });
+          break;
+        case 'getAuth':
+          getAuth(n).then((token) => {
+              msg.access_token = token;
+              if(!msg.headers) {
+                msg.headers = {};
+              }
+              msg.headers.Authorization = "Bearer " + token;
+
+              node.send(msg);
+            })
+            .catch((err)  => {
+              node.error(err);
+            });
+          break;
+      }
     });
-    RED.nodes.registerType('Keycloak', KeycloakNode);
   }
+  RED.nodes.registerType('Keycloak', KeycloakNode);
 }
