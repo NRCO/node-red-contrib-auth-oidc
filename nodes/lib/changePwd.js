@@ -33,7 +33,7 @@ var getUserId = (client, realm, user) => {
 var setPwd = (client, realm, user) => {
     return new Promise((resolve, reject) => {        
        return client.users.resetPassword(realm, user.userId, {
-                temporary: false,
+                temporary: user.temporary || false,
                 value: user.password
             })
             .then((res) => {
@@ -63,7 +63,10 @@ var changePwd = (node, payload) => {
                 payload.userId = users[0].id;
                 console.log(payload);
                 return setPwd(client, realm, payload).then(() => {
-                    resolve("modification password effectuée");
+                    resolve({                        
+                        message : "modification password effectuée",
+                        success : true                    
+                    });
                 });
             });
         });
