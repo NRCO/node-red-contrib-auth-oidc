@@ -7,6 +7,7 @@
     </label>
     <select type="text" id="node-input-operation" style="display: inline-block; vertical-align: top;">
       <option value="create">Create User</option>
+      <option value="remove">Remove User</option>
       <option value="changePwd">Change Password</option>
       <option value="getAuth">Get Auth</option>
       <option value="checkAuth">Check Auth</option>
@@ -126,6 +127,16 @@
         $(".node-input-upsert, .node-input-client").show();
         $(".node-input-upsert, .node-input-role").hide();
       }
+      if (id === "remove") {      
+        $(".node-input-realm").show();
+        $(".node-input-url").show();
+        $(".node-input-secret").show();
+        $(".node-input-admin").show();
+        $(".node-input-admin_password").show();
+        $(".node-input-upsert, .node-input-discovery").show();
+        $(".node-input-upsert, .node-input-client").show();
+        $(".node-input-upsert, .node-input-role").hide();
+      }
       if (id === "getAuth") {      
         $(".node-input-realm").show();
         $(".node-input-url").show();
@@ -187,7 +198,7 @@
       }  
     },
     inputs: 1,
-    outputs: 1,
+    outputs: 2,
     icon: 'keycloak.png',
     align: 'right',
     label: function () {

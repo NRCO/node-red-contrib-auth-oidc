@@ -8,11 +8,10 @@ module.exports = function (RED) {
   const create = require('./lib/create').create;
   const changePwd = require('./lib/changePwd').changePwd;
   const getAuth = require('./lib/getAuth').getAuth;
+  const remove = require('./lib/remove').remove;
 
   function KeycloakNode(n) {
     RED.nodes.createNode(this, n)
-
-
     var node = this;
     this.verifier = {
       verify: function (accessToken, cb) {
@@ -24,7 +23,7 @@ module.exports = function (RED) {
       url: n.discovery,
       json: true
     }, (err, res, body) => {
-      if (err) {        
+      if (err) {
         this.status({
           fill: 'red',
           shape: 'ring',
@@ -33,7 +32,6 @@ module.exports = function (RED) {
         return this.error(RED._('bad-discovery-request'))
       }
       if (!body || !body.jwks_uri) {
-        
         this.status({
           fill: 'red',
           shape: 'ring',
@@ -41,7 +39,7 @@ module.exports = function (RED) {
         })
         return this.error(RED._('bad-discovery-response'))
       }
-      
+
 
       const options = {
         cache: true,
@@ -70,7 +68,6 @@ module.exports = function (RED) {
     })
 
     this.on('input', msg => {
-
       switch (n.operation) {
         case 'checkAuth':
           if (!msg.req || !msg.req.headers || !msg.req.headers['authorization']) {
@@ -81,47 +78,63 @@ module.exports = function (RED) {
               text: 'no-access-token'
             });
             msg.payload = {};
-            msg.error = 'NoAccessToken'
-            msg.statusCode = 401
-            return this.send(msg)
+            msg.error = 'NoAccessToken';
+            msg.statusCode = 401;
+            node.send(null, msg);
           }
           const accessToken = msg.req.headers['authorization'].split(' ')[1]
           this.accessToken = accessToken;
+          console.log(this);
           check(this, msg).then((res) => {
-            node.send(res)
+            node.send(res, null)
+          }).catch((err) => {
+            msg.payload = err;
+            node.send(null, msg);
           });
           break;
 
         case 'create':
           create(n, msg.payload).then((res) => {
               msg.payload = res;
-              node.send(msg);
+              node.send(msg, null);
             })
             .catch((err)  => {
-              node.error(err);
+              msg.payload = err;
+              node.send(null, msg);
+            });
+          break;
+        case 'remove':
+          remove(n, msg.payload).then((res) => {
+              msg.payload = res;
+              node.send(msg, null);
+            })
+            .catch((err)  => {
+              msg.payload = err;
+              node.send(null, msg);
             });
           break;
         case 'changePwd':
           changePwd(n, msg.payload).then((res) => {
               msg.payload = res;
-              node.send(msg);
+              node.send(msg,null);
             })
             .catch((err)  => {
-              node.error(err);
+              msg.payload = err;
+              node.send(null, msg);
             });
           break;
         case 'getAuth':
           getAuth(n).then((token) => {
               msg.access_token = token;
-              if(!msg.headers) {
+              if (!msg.headers) {
                 msg.headers = {};
               }
               msg.headers.Authorization = "Bearer " + token;
-
-              node.send(msg);
+              node.send(msg,null);
             })
             .catch((err)  => {
-              node.error(err);
+              msg.payload = err;
+              node.send(null, msg);
             });
           break;
       }
