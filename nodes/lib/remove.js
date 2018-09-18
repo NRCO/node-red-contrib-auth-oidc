@@ -6,10 +6,10 @@ let settings = {};
  */
 var getClient = (settings) => {
     return new Promise((resolve, reject) => {
-        console.log(settings);
+        //console.log(settings);
         adminClient(settings)
             .then((client) => {
-                console.log(client);
+                //console.log(client);
                 return resolve(client);
             })
             .catch((err) => {
@@ -80,7 +80,8 @@ var remove = (node, user) => {
                     return resolve(user);
                 });
             });
-        }).catch((err) => {            
+        }).catch((err) => {   
+            console.log(err);         
             return reject(err);
         });
     });

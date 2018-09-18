@@ -84,7 +84,7 @@ module.exports = function (RED) {
           }
           const accessToken = msg.req.headers['authorization'].split(' ')[1]
           this.accessToken = accessToken;
-          console.log(this);
+          //console.log(this);
           check(this, msg).then((res) => {
             node.send(res, null)
           }).catch((err) => {
