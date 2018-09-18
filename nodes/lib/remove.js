@@ -19,6 +19,23 @@ var getClient = (settings) => {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} realm 
+ * @param {*} user 
+ */
+var getUserId = (client, realm, user) => {
+    return new Promise((resolve, reject) => {
+        return client.users.find(realm, user).then((user) => {
+                return resolve(user);
+            })
+            .catch((err) => {
+                return reject(err);
+            });
+    })
+}
+
 
 
 /**
@@ -43,7 +60,7 @@ var removeUser = (client, userId, realm) => {
 
 
 
-var remove = (node, userId) => {
+var remove = (node, user) => {
     return new Promise((resolve, reject) => {
         settings = {
             baseUrl: node.url,
@@ -55,11 +72,12 @@ var remove = (node, userId) => {
             password: node.admin_password
         };
         return getClient(settings).then((client) => {
-            return removeUser(client, userId, settings.realmName).then((user) => {
-                return resolve(user);
+            return getUserId(client, realm, payload).then((users) => {                ;
+                return removeUser(client, users[0].id, settings.realmName).then((user) => {
+                    return resolve(user);
+                });
             });
-        }).catch((err) => {
-            console.log(err);
+        }).catch((err) => {            
             return reject(err);
         });
     });
