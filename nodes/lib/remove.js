@@ -75,7 +75,7 @@ var remove = (node, user) => {
             password: node.admin_password
         };
         return getClient(settings).then((client) => {
-            return getUserId(client, realm, payload).then((users) => {                ;
+            return getUserId(client, realm, user).then((users) => {                ;
                 return removeUser(client, users[0].id, settings.realmName).then((user) => {
                     return resolve(user);
                 });
