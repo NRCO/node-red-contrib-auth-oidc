@@ -28,9 +28,11 @@ var getClient = (settings) => {
 var getUserId = (client, realm, user) => {
     return new Promise((resolve, reject) => {
         return client.users.find(realm, user).then((user) => {
+                console.log(user);
                 return resolve(user);
             })
             .catch((err) => {
+                console.log(err);
                 return reject(err);
             });
     })
@@ -52,6 +54,7 @@ var removeUser = (client, userId, realm) => {
                 console.log('user deleted');
                 return resolve(user);
             }).catch((err) => {
+                console.log(err);
                 return reject(err);
             });
     });
