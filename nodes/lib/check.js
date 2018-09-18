@@ -18,8 +18,8 @@ var check = (node, msg) => {
 
             msg.access_token = jwt;
             //check role and client    
-            console.log("client"  + msg.client);
-            console.log("jwt" + jwt.body.resource_access[msg.client]);
+            //console.log("client"  + msg.client);
+            //console.log("jwt" + jwt.body.resource_access[msg.client]);
             if (node.client && !jwt.body.resource_access[msg.client]) {
                 let err = 'Access error : client not found';
                 node.status({
