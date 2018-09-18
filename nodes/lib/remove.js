@@ -48,7 +48,7 @@ var getUserId = (client, realm, user) => {
 var removeUser = (client, userId, realm) => {
     return new Promise((resolve, reject) => {
         console.log('user deletion');
-        console.log(user);
+        console.log(userId);
         return client.users.remove(realm, userId)
             .then((user) => {
                 console.log('user deleted');
@@ -75,7 +75,7 @@ var remove = (node, user) => {
             password: node.admin_password
         };
         return getClient(settings).then((client) => {
-            return getUserId(client, realm, user).then((users) => {                ;
+            return getUserId(client, node.realm, user).then((users) => {                ;
                 return removeUser(client, users[0].id, settings.realmName).then((user) => {
                     return resolve(user);
                 });
