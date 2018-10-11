@@ -98,6 +98,7 @@ module.exports = function (RED) {
             .then((res) => {
               msg.payload = res;
               node.send(msg, null);
+              break;
             })
             .catch((err) => {
               console.log("catch creation");
@@ -105,8 +106,9 @@ module.exports = function (RED) {
                 error: err
               }
               node.send(null, msg);
+              break;
             });
-          break;
+         
         case 'remove':
           remove(n, msg.payload).then((res) => {
               msg.payload = res;
