@@ -95,12 +95,15 @@ module.exports = function (RED) {
 
         case 'create':
           create(n, msg.payload)
-          .then((res) => {
+            .then((res) => {
               msg.payload = res;
               node.send(msg, null);
             })
-            .catch((err)  => {
-              msg.payload = err;
+            .catch((err) => {
+              console.log("catch creation");
+              msg.payload = {
+                error: err
+              }
               node.send(null, msg);
             });
           break;
@@ -109,7 +112,7 @@ module.exports = function (RED) {
               msg.payload = res;
               node.send(msg, null);
             })
-            .catch((err)  => {
+            .catch((err) => {
               msg.payload = err;
               node.send(null, msg);
             });
@@ -117,9 +120,9 @@ module.exports = function (RED) {
         case 'changePwd':
           changePwd(n, msg.payload).then((res) => {
               msg.payload = res;
-              node.send(msg,null);
+              node.send(msg, null);
             })
-            .catch((err)  => {
+            .catch((err) => {
               msg.payload = err;
               node.send(null, msg);
             });
@@ -131,9 +134,9 @@ module.exports = function (RED) {
                 msg.headers = {};
               }
               msg.headers.Authorization = "Bearer " + token;
-              node.send(msg,null);
+              node.send(msg, null);
             })
-            .catch((err)  => {
+            .catch((err) => {
               msg.payload = err;
               node.send(null, msg);
             });
