@@ -82,11 +82,11 @@ var create = (node, userToCreated) => {
         };
 
         return getClient(settings).then((client) => {
-            return getGroupID(client, userToCreated.groupName, settings.realmName).then((groupId) => {                
+            return getGroupID(client, userToCreated.groupName, settings.realmName).then((groupId) => {
                 var user = {
                     "username": userToCreated.username,
                     "email": userToCreated.email,
-                    "enabled": true                    
+                    "enabled": true
                 };
                 return createUser(client, user, settings.realmName).then((user) => {
                     return client.groups.join(node.realm, user.id, groupId)
@@ -94,6 +94,9 @@ var create = (node, userToCreated) => {
                             return resolve(user);
                         })
 
+                }).catch((err) => {
+                    console.log(err);
+                    return reject(err);
                 });
             });
         }).catch((err) => {

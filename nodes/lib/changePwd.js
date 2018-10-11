@@ -59,7 +59,8 @@ var changePwd = (node, payload) => {
         realm = settings.realmName;
 
         return getClient(settings).then((client) => {           
-            return getUserId(client, realm, payload).then((users) => {               
+            return getUserId(client, realm, payload).then((users) => {      
+                console.log(users);         
                 payload.userId = users[0].id;
                 console.log(payload);
                 return setPwd(client, realm, payload).then(() => {
