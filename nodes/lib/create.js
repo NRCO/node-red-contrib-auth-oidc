@@ -54,7 +54,7 @@ var getGroupID = (client, groupName, realm) => {
 var createUser = (client, user, realm) => {
     return new Promise((resolve, reject) => {
 
-        console.log('user creation');
+        console.log('user creation !!');
         console.log(user);
         return client.users.create(realm, user)
             .then((user) => {
@@ -89,12 +89,15 @@ var create = (node, userToCreated) => {
                     "enabled": true
                 };
                 return createUser(client, user, settings.realmName).then((user) => {
+                    console.log("ok");
+                    console.log(user);
                     return client.groups.join(node.realm, user.id, groupId)
                         .then((user) => {
                             return resolve(user);
                         })
 
                 }).catch((err) => {
+                    console.log("user ko")
                     console.log(err);
                     return reject(err);
                 });
