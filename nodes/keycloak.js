@@ -97,17 +97,16 @@ module.exports = function (RED) {
           create(n, msg.payload)
             .then((res) => {
               msg.payload = res;
-              node.send(msg, null);
-              break;
+              node.send(msg, null);              
             })
             .catch((err) => {
               console.log("catch creation");
               msg.payload = {
                 error: err
               }
-              node.send(null, msg);
-              break;
+              node.send(null, msg);              
             });
+            break;
          
         case 'remove':
           remove(n, msg.payload).then((res) => {
