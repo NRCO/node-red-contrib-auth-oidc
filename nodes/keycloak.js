@@ -82,6 +82,7 @@ module.exports = function (RED) {
                             msg.error = 'NoAccessToken';
                             msg.statusCode = 401;
                             node.send([null, msg]);
+                            break;
                         }
 
                         const accessToken = msg.req.headers['authorization'].split(' ')[1]

@@ -2,7 +2,6 @@ var check = (node, msg) => {
     return new Promise((resolve, reject) => {
         return node.verifier.verify(node.accessToken, (err, jwt) => {
             if (err) {
-                node.error(RED._('bad-access-token', err))
                 node.status({
                     fill: 'red',
                     shape: 'ring',
