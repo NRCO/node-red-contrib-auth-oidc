@@ -68,6 +68,7 @@ module.exports = function (RED) {
             })
 
             this.on('input', msg => {
+                let prom;
                 switch (n.operation) {
                     case 'checkAuth':
 
@@ -81,60 +82,26 @@ module.exports = function (RED) {
                             msg.payload = {};
                             msg.error = 'NoAccessToken';
                             msg.statusCode = 401;
-                            node.send([null, msg]);
-                            break;
+                            prom = Promise.reject(msg);
+
+                        } else {
+                            const accessToken = msg.req.headers['authorization'].split(' ')[1]
+                            this.accessToken = accessToken;
+                            prom = check(this, msg);
                         }
 
-                        const accessToken = msg.req.headers['authorization'].split(' ')[1]
-                        this.accessToken = accessToken;
-
-                        check(this, msg)
-                        .then((res) => {
-                            node.send([res, null]);
-                        })
-                        .catch((err) => {
-                            msg.payload = err;
-                            node.send([null, msg]);
-                        });
                         break;
-
                     case 'create':
-                    create(n, msg.payload)
-                    .then((res) => {
-                        msg.payload = res;
-                        node.send([msg, null]);
-                    })
-                    .catch((err) => {
-                        console.log("catch creation");
-                        msg.payload = {
-                            error: err
-                        }
-                        node.send([null, msg]);
-                    });
-                    break;
-
+                        prom = create(n, msg.payload);
+                        break;
                     case 'remove':
-                    remove(n, msg.payload).then((res) => {
-                        msg.payload = res;
-                        node.send([msg, null]);
-                    })
-                    .catch((err) => {
-                        msg.payload = err;
-                        node.send([null, msg]);
-                    });
-                    break;
+                        prom = remove(n, msg.payload)
+                        break;
                     case 'changePwd':
-                    changePwd(n, msg.payload).then((res) => {
-                        msg.payload = res;
-                        node.send([msg, null]);
-                    })
-                    .catch((err) => {
-                        msg.payload = err;
-                        node.send([null, msg]);
-                    });
-                    break;
+                        prom = changePwd(n, msg.payload);
+                        break;
                     case 'getAuth':
-                    getAuth(n).then((token) => {
+                        prom = getAuth(n).then((token) => {
                         msg.access_token = token;
                         if (!msg.headers) {
                             msg.headers = {};
@@ -148,6 +115,13 @@ module.exports = function (RED) {
                     });
                     break;
                 }
+
+                prom.then((res) => {
+                    node.send([res, null]);
+                })
+                .catch((err) => {
+                    node.send([null, err]);
+                });
             });
         }
         RED.nodes.registerType('Keycloak', KeycloakNode);
