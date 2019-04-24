@@ -11,13 +11,12 @@ var check = (node, msg) => {
                 delete msg.payload;
                 msg.error = err;
                 msg.statusCode = 403;
-                msg.res._res.status(msg.statusCode).send(msg.error);
                 return reject(msg);
             };
 
 
             msg.access_token = jwt;
-            //check role and client    
+            //check role and client
             //console.log("client"  + msg.client);
             //console.log("jwt" + jwt.body.resource_access[msg.client]);
             if (node.client && !jwt.body.resource_access[msg.client]) {
@@ -30,7 +29,6 @@ var check = (node, msg) => {
                 delete msg.payload;
                 msg.error = err;
                 msg.statusCode = 403;
-                msg.res._res.status(msg.statusCode).send(msg.error);
                 return reject(msg);
             }
 
@@ -46,7 +44,6 @@ var check = (node, msg) => {
                 delete msg.payload;
                 msg.error = err;
                 msg.statusCode = 403;
-                msg.res._res.status(msg.statusCode).send(msg.error);
                 return reject(msg);
 
             };
@@ -65,7 +62,6 @@ var check = (node, msg) => {
                         delete msg.payload;
                         msg.error = err;
                         msg.statusCode = 403;
-                        msg.res._res.status(msg.statusCode).send(msg.error);
                         return reject(msg);
                     }
                 }
