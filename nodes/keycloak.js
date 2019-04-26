@@ -93,8 +93,7 @@ module.exports = function (RED) {
                             node.send([res, null]);
                         })
                         .catch((err) => {
-                            msg.payload = err;
-                            node.send([null, msg]);
+                            node.send([null, err]);
                         });
                         break;
 
