@@ -13,7 +13,7 @@ var getClient = (settings) => {
                 return resolve(client);
             })
             .catch((err) => {
-                err = "erreur admin client";
+                //err = "erreur admin client";
                 return reject(err);
             });
     });
