@@ -51,13 +51,14 @@ var getGroupID = (client, groupName, realm) => {
 }
 
 function searchTree(element, matchingTitle) {
+    console.log("element",element)
     if (element.name == matchingTitle) {
         return element;
-    } else if (element.subgroup != null) {
+    } else if (element.subGroups != null) {
         var i;
         var result = null;
-        for (i = 0; result == null && i < element.subgroup.length; i++) {
-            result = searchTree(element.subgroup[i], matchingTitle);
+        for (i = 0; result == null && i < element.subGroups.length; i++) {
+            result = searchTree(element.subGroups[i], matchingTitle);
         }
         return result;
     }
