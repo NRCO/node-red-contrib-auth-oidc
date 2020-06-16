@@ -31,8 +31,9 @@ var getGroupID = (client, groupName, realm) => {
                 //console.log(client);
                 return client.groups.find(realm)
                     .then((groups) => {
-                        console.log('groups keycloak', groups)
+                        
                         for (var i = 0; i < groups.length; i++) {
+                            console.log('group[i]', groups[i])
                             if (groups[i].name == groupName) {
                                 return resolve(groups[i].id);
                             }
