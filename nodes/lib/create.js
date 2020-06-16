@@ -31,14 +31,18 @@ var getGroupID = (client, groupName, realm) => {
                 //console.log(client);
                 return client.groups.find(realm)
                     .then((groups) => {
-                        
-                        for (var i = 0; i < groups.length; i++) {
+                        /*for (var i = 0; i < groups.length; i++) {
                             console.log('group[i]', groups[i])
                             if (groups[i].name == groupName) {
                                 return resolve(groups[i].id);
                             }
+                        }*/
+                        let group = searchTree(groups, groupName);
+                        if (group) {
+                            return resolve(group.id);
+                        } else {
+                            return reject('Group doesnt exist');
                         }
-                        return reject('Group doesnt exist');
                     }).catch((err) => {
                         return reject(err);
                     });
@@ -47,6 +51,22 @@ var getGroupID = (client, groupName, realm) => {
             });
     });
 }
+
+function searchTree(element, matchingTitle) {
+    if (element.title == matchingTitle) {
+        return element;
+    } else if (element.subgroup != null) {
+        var i;
+        var result = null;
+        for (i = 0; result == null && i < element.subgroup.length; i++) {
+            result = searchTree(element.subgroup[i], matchingTitle);
+        }
+        return result;
+    }
+    return null;
+}
+
+
 
 /**
  * Create user and add to group
